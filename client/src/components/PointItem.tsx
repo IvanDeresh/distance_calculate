@@ -1,10 +1,12 @@
 import { PointItemType } from "../types/props";
+import "../index.css";
 
 const PointItem = ({
   index,
   inputValues,
   handleInputChange,
   addNewInputAfter,
+  handleRemovePoint,
 }: PointItemType) => {
   return (
     <div className="flex items-center">
@@ -20,9 +22,15 @@ const PointItem = ({
       />
       <button
         onClick={() => addNewInputAfter(index)}
-        className="mx-2 p-2 text-white bg-green-500 rounded-full"
+        className="mx-2 p-2 clip-path-app text-white bg-green-500 rounded-full"
       >
         +
+      </button>
+      <button
+        onClick={() => handleRemovePoint(index)}
+        className="mx-2 p-2 text-white  bg-green-500 rounded-full"
+      >
+        -
       </button>
     </div>
   );

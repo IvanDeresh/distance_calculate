@@ -68,3 +68,15 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.clip-path-app {
+  clip-path: polygon(
+    100% 0%,
+    // top-right
+    0% 100%,
+    // bottom-right
+    0% 100%,
+    // bottom-left
+    0% 0% // top-left
+  );
+}

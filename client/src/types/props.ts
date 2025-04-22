@@ -10,4 +10,5 @@ export type PointItemType = {
   inputValues: string[];
   handleInputChange: Function;
   addNewInputAfter: Function;
+  handleRemovePoint: Function;
 };

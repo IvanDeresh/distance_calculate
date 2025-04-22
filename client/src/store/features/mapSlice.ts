@@ -18,8 +18,12 @@ export const mapSlice = createSlice({
     clearPoints: (state) => {
       state.points = [];
     },
+    removePoint: (state, action: PayloadAction<number>) => {
+      state.points.splice(action.payload, 1);
+    },
   },
 });
 
-export const { addPoint, setPoints, clearPoints } = mapSlice.actions;
+export const { addPoint, setPoints, clearPoints, removePoint } =
+  mapSlice.actions;
 export default mapSlice.reducer;

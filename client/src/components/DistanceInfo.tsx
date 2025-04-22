@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
-import { setPoints } from "../store/features/mapSlice";
+import { setPoints, removePoint } from "../store/features/mapSlice";
 import { getDistanceKm } from "../utils/haversine";
 import { useEffect, useState } from "react";
 import SuggestionsItem from "./SuggestionsItem";
@@ -66,6 +66,20 @@ export default function DistanceInfo() {
     }
   };
 
+  const handleRemovePoint = (index: number) => {
+    if (points.length > 1) {
+      dispatch(removePoint(index));
+
+      const updatedInputs = [...inputValues];
+      updatedInputs.splice(index, 1);
+      setInputValues(updatedInputs);
+
+      const updatedSuggestions = [...suggestions];
+      updatedSuggestions.splice(index, 1);
+      setSuggestions(updatedSuggestions);
+    }
+  };
+
   const handleSelectSuggestion = (index: number, suggestion: any) => {
     if (!suggestion || !suggestion.lat || !suggestion.lon) return;
     const lat = parseFloat(suggestion.lat);
@@ -100,7 +114,11 @@ export default function DistanceInfo() {
     setSuggestions(updatedSuggestions);
   };
 
-  if (points.length === 0) return null;
+  useEffect(() => {
+    if (points.length === 0) {
+      dispatch(setPoints([{ lat: 50, lng: 30 }]));
+    }
+  }, [points.length, dispatch]);
 
   const total = points.reduce((sum, point, i, arr) => {
     if (i === 0) return 0;
@@ -116,6 +134,7 @@ export default function DistanceInfo() {
               index={index}
               addNewInputAfter={addNewInputAfter}
               handleInputChange={handleInputChange}
+              handleRemovePoint={handleRemovePoint}
               inputValues={inputValues}
             />
             {suggestions[index] && suggestions[index].length > 0 && (
