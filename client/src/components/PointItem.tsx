@@ -28,7 +28,7 @@ const PointItem = ({
       </button>
       <button
         onClick={() => handleRemovePoint(index)}
-        className="mx-1 p-2 text-white flex justify-center items-center w-[3rem] h-[3rem] rounded-full"
+        className="ml-1 mr-2 p-2 text-white flex justify-center items-center w-[3rem] h-[3rem] rounded-full"
       >
         -
       </button>
