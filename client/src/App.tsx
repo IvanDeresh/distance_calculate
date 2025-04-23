@@ -56,7 +56,7 @@ function App() {
 
   return (
     <div className="p-6 relative min-w-full flex">
-      <div className="absolute z-100 bg-[#242424] top-10 left-20 p-10  max-md:w-auto max-sm:left-5 rounded-lg">
+      <div className="absolute z-100 bg-[#242424] top-10 left-20 p-10  max-lg:w-[40vw] max-md:w-auto max-sm:left-5 rounded-lg">
         <h2 className="text-3xl font-bold mb-4 ">Distance Tool 🗺️⁀જ✈︎</h2>
         <DistanceInfo />
         <div className="mt-2">

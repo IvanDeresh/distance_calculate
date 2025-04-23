@@ -27,6 +27,7 @@ Built with React + Vite + Redux + Leaflet
 # Client (React)
 
 cd client
+create .env file like in .env.example
 npm install
 
 # Server (Express)
