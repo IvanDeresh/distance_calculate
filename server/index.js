@@ -5,7 +5,7 @@ import cors from "cors";
 const app = express();
 const port = 3000;
 
-app.use(cors()); // Додаємо CORS middleware
+app.use(cors());
 
 app.get("/getRoute", async (req, res) => {
   const coordinates = req.query.coordinates;

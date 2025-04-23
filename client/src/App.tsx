@@ -1,10 +1,12 @@
 import { useEffect } from "react";
 import MapComponent from "./components/Map";
 import DistanceInfo from "./components/DistanceInfo";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { clearPoints, setPoints } from "./store/features/mapSlice";
 import { useLocation, useNavigate } from "react-router-dom";
-import { store } from "./store/store";
+import { RootState, store } from "./store/store";
+import Info from "./components/Info";
+import { getDistanceKm } from "./utils/haversine";
 
 function parseUrlPath(path: string): { lat: number; lng: number }[] {
   return path
@@ -28,6 +30,7 @@ function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const points = useSelector((state: RootState) => state.map.points);
 
   useEffect(() => {
     const points = parseUrlPath(location.pathname);
@@ -46,16 +49,22 @@ function App() {
     return unsubscribe;
   }, [navigate]);
 
+  const total = points.reduce((sum, point, i, arr) => {
+    if (i === 0) return 0;
+    return sum + getDistanceKm(arr[i - 1], point);
+  }, 0);
+
   return (
     <div className="p-6 relative min-w-full flex">
-      <div className="absolute z-100 bg-[#242424] top-10 left-20 p-10 rounded-lg">
+      <div className="absolute z-100 bg-[#242424] top-10 left-20 p-10  max-md:w-auto max-sm:left-5 rounded-lg">
         <h2 className="text-3xl font-bold mb-4 ">Distance Tool 🗺️⁀જ✈︎</h2>
         <DistanceInfo />
         <div className="mt-2">
+          <Info points={points} total={total} />
           <button onClick={() => dispatch(clearPoints())}>Clear All</button>
         </div>
       </div>
-      <div className="z-10">
+      <div className="z-10 max-sm:mt-[25rem]">
         <MapComponent />
       </div>
     </div>

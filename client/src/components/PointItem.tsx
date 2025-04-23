@@ -10,7 +10,7 @@ const PointItem = ({
 }: PointItemType) => {
   return (
     <div className="flex items-center">
-      <label className="bg-[#1a1a1a] text-white min-w-[46px] flex justify-center items-center font-bold h-[46px] rounded-md mr-2">
+      <label className="bg-[#1a1a1a] text-white min-w-[3rem] flex justify-center items-center font-bold h-[3rem] rounded-md mr-2">
         {index + 1}
       </label>
       <input
@@ -22,13 +22,13 @@ const PointItem = ({
       />
       <button
         onClick={() => addNewInputAfter(index)}
-        className="mx-2 p-2 clip-path-app text-white bg-green-500 rounded-full"
+        className="ml-2 mr-1 p-2 clip-path-app text-white w-[3rem] h-[3rem] flex justify-center items-center rounded-full"
       >
         +
       </button>
       <button
         onClick={() => handleRemovePoint(index)}
-        className="mx-2 p-2 text-white  bg-green-500 rounded-full"
+        className="mx-1 p-2 text-white flex justify-center items-center w-[3rem] h-[3rem] rounded-full"
       >
         -
       </button>

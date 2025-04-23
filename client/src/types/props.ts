@@ -1,3 +1,5 @@
+import { Point } from "./store";
+
 export type SuggestionsItemProps = {
   i: number;
   index: number;
@@ -11,4 +13,9 @@ export type PointItemType = {
   handleInputChange: Function;
   addNewInputAfter: Function;
   handleRemovePoint: Function;
+};
+
+export type InfoProps = {
+  total: number;
+  points: Point[];
 };

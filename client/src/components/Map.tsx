@@ -2,77 +2,63 @@ import {
   MapContainer,
   TileLayer,
   Marker,
+  Popup,
   Polyline,
   useMapEvents,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { useDispatch, useSelector } from "react-redux";
 import { addPoint } from "../store/features/mapSlice";
-import type { RootState } from "../store/store";
-import { useEffect, useState } from "react";
-import type { LatLngExpression } from "leaflet";
+import { LatLngExpression } from "leaflet";
 
-const fetchRoute = async (points: { lat: number; lng: number }[]) => {
-  const coordinates = points
-    .map((point) => `${point.lng},${point.lat}`)
-    .join(";");
-  const response = await fetch(
-    `http://localhost:3000/getRoute?coordinates=${coordinates}`
-  );
-  const data = await response.json();
-  console.log("API Response:", data);
-  if (data.routes && data.routes[0]) {
-    return data.routes[0].geometry.coordinates;
-  } else {
-    console.error("Маршрут не знайдено");
-    return [];
-  }
-};
+function normalizeLng(lng: number) {
+  return ((((lng + 180) % 360) + 360) % 360) - 180;
+}
 
 function ClickHandler() {
   const dispatch = useDispatch();
   useMapEvents({
     click(e) {
-      dispatch(addPoint({ lat: e.latlng.lat, lng: e.latlng.lng }));
+      const lat = e.latlng.lat;
+      const lng = normalizeLng(e.latlng.lng);
+      dispatch(addPoint({ lat, lng }));
     },
   });
   return null;
 }
 
 export default function MapComponent() {
-  const points = useSelector((state: RootState) => state.map.points);
-  const [route, setRoute] = useState<any[]>([]);
-
-  useEffect(() => {
-    const getRoute = async () => {
-      if (points.length > 1) {
-        const fetchedRoute = await fetchRoute(points);
-        setRoute(fetchedRoute);
-      }
-    };
-    getRoute();
-  }, [points]);
-
+  const points = useSelector((state: any) => state.map.points);
   const mapCenter: LatLngExpression = [52, 19];
 
   return (
     <MapContainer
       center={mapCenter}
       zoom={5}
-      className="max-h-[90vh] w-[95vw] rounded-2xl"
+      className="max-h-[90vh] map-wrapper  max-ms:max-h-[65vh] w-[95vw] rounded-2xl"
       style={{ height: "90vh", width: "95vw" }}
+      maxZoom={25}
+      minZoom={2}
+      maxBounds={[
+        [90, -180],
+        [-90, 180],
+      ]}
+      maxBoundsViscosity={1.0}
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution="© OpenStreetMap"
+        // noWrap={true}
       />
       <ClickHandler />
 
-      {points.map((point, i) => (
-        <Marker key={i} position={[point.lat, point.lng] as LatLngExpression} />
+      {points.map((point: { lat: number; lng: number }, i: number) => (
+        <Marker key={i} position={[point.lat, point.lng] as LatLngExpression}>
+          <Popup>{`${point.lat}, ${point.lng}`}</Popup>
+        </Marker>
       ))}
 
-      {points.map((point, index) => {
+      {points.map((point: { lat: number; lng: number }, index: number) => {
         if (index < points.length - 1) {
           return (
             <Polyline
@@ -89,18 +75,6 @@ export default function MapComponent() {
         }
         return null;
       })}
-
-      {route.length > 0 && (
-        <Polyline
-          positions={
-            route.map((coord: any) => [
-              coord[1],
-              coord[0],
-            ]) as LatLngExpression[]
-          }
-          pathOptions={{ color: "blue", weight: 4 }}
-        />
-      )}
     </MapContainer>
   );
 }

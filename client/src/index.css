@@ -80,3 +80,13 @@ button:focus-visible {
     0% 0% // top-left
   );
 }
+
+.map-wrapper {
+  max-height: 90vh;
+}
+
+@media (max-width: 640px) {
+  .map-wrapper {
+    max-height: 65vh;
+  }
+}

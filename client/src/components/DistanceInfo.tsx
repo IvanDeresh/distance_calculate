@@ -1,30 +1,10 @@
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { setPoints, removePoint } from "../store/features/mapSlice";
-import { getDistanceKm } from "../utils/haversine";
 import { useEffect, useState } from "react";
 import SuggestionsItem from "./SuggestionsItem";
 import PointItem from "./PointItem";
 import { fetchSuggestions, isCoordinates } from "../utils/api";
-
-// const geocode = async (query: string) => {
-//   try {
-//     const response = await fetch(
-//       `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-//         query
-//       )}&limit=1&addressdetails=1`
-//     );
-//     const data = await response.json();
-//     if (data.length > 0) {
-//       const { lat, lon } = data[0];
-//       return { lat: parseFloat(lat), lng: parseFloat(lon) };
-//     }
-//     return null;
-//   } catch (error) {
-//     console.error("Geocode error:", error);
-//     return null;
-//   }
-// };
 
 export default function DistanceInfo() {
   const points = useSelector((state: RootState) => state.map.points);
@@ -120,13 +100,8 @@ export default function DistanceInfo() {
     }
   }, [points.length, dispatch]);
 
-  const total = points.reduce((sum, point, i, arr) => {
-    if (i === 0) return 0;
-    return sum + getDistanceKm(arr[i - 1], point);
-  }, 0);
-
   return (
-    <div className="mt-4 text-lg max-h-[60vh] overflow-y-scroll">
+    <div className="mt-4 text-lg max-sm:max-h-[25vh] max-h-[60vh]  overflow-y-scroll">
       <ul>
         {points.map((_, index) => (
           <div key={index} className="mb-4 relative">
@@ -152,11 +127,6 @@ export default function DistanceInfo() {
           </div>
         ))}
       </ul>
-
-      <div className="mt-4">
-        Distance: <span className="font-bold">{total.toFixed(2)}</span> km
-        between <span className="font-bold">{points.length}</span> points 📌
-      </div>
     </div>
   );
 }
