@@ -61,7 +61,9 @@ function App() {
         <DistanceInfo />
         <div className="mt-2">
           <Info points={points} total={total} />
-          <button onClick={() => dispatch(clearPoints())}>Clear All</button>
+          <button className="mt-2" onClick={() => dispatch(clearPoints())}>
+            Clear All
+          </button>
         </div>
       </div>
       <div className="z-10 max-sm:mt-[35rem]">

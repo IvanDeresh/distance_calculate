@@ -39,8 +39,8 @@ export default function MapComponent() {
     <MapContainer
       center={mapCenter}
       zoom={5}
-      className="max-h-[90vh] map-wrapper  max-ms:max-h-[65vh] w-[95vw] max-sm:w-[90vw] rounded-2xl"
-      style={{ height: "90vh", width: "95vw" }}
+      className="max-h-[90vh] map-wrapper  max-ms:max-h-[65vh] w-[97.5vw] max-sm:w-[90vw] rounded-2xl"
+      style={{ height: "90vh", width: "97.5vw" }}
       maxZoom={25}
       minZoom={2}
       maxBounds={[
