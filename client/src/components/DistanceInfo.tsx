@@ -1,21 +1,37 @@
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { setPoints, removePoint } from "../store/features/mapSlice";
-import { useEffect, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import SuggestionsItem from "./SuggestionsItem";
 import PointItem from "./PointItem";
 import { fetchSuggestions, isCoordinates } from "../utils/api";
 import { Suggestion } from "../types/util";
+import SuggestionsPortal from "./SuggestionsPortal";
 
-export default function DistanceInfo() {
+export default function DistanceInfo({
+  inputRefs,
+}: {
+  inputRefs: React.MutableRefObject<(HTMLInputElement | null)[]>;
+}) {
   const points = useSelector((state: RootState) => state.map.points);
   const dispatch = useDispatch();
   const [inputValues, setInputValues] = useState<string[]>([]);
-  const [suggestions, setSuggestions] = useState<Suggestion[][]>([]);
+  const [portalData, setPortalData] = useState<{
+    visible: boolean;
+    top: number;
+    left: number;
+    width: number;
+    suggestions: JSX.Element[];
+  }>({
+    visible: false,
+    top: 0,
+    left: 0,
+    width: 0,
+    suggestions: [],
+  });
 
   useEffect(() => {
     setInputValues(points.map((p) => `${p.lat}, ${p.lng}`));
-    setSuggestions(points.map(() => []));
   }, [points]);
 
   const handleInputChange = async (index: number, value: string) => {
@@ -29,35 +45,42 @@ export default function DistanceInfo() {
         const updatedPoints = [...points];
         updatedPoints[index] = { lat, lng };
         dispatch(setPoints(updatedPoints));
-        setSuggestions((prev) => {
-          const newS = [...prev];
-          newS[index] = [];
-          return newS;
-        });
+        setPortalData((prev) => ({ ...prev, visible: false }));
       }
     } else if (value.length > 2) {
       const results = await fetchSuggestions(value);
-      const newSuggestions = [...suggestions];
-      newSuggestions[index] = results;
-      setSuggestions(newSuggestions);
+      const rect = inputRefs.current[index]?.getBoundingClientRect();
+      if (rect) {
+        const suggestionsJSX = results.map((sugg, i) => (
+          <SuggestionsItem
+            key={i}
+            sugg={sugg}
+            i={i}
+            index={index}
+            handleSelectSuggestion={handleSelectSuggestion}
+          />
+        ));
+
+        setPortalData({
+          visible: true,
+          top: rect.bottom + window.scrollY,
+          left: rect.left + window.scrollX,
+          width: rect.width,
+          suggestions: suggestionsJSX,
+        });
+      }
     } else {
-      const newSuggestions = [...suggestions];
-      newSuggestions[index] = [];
-      setSuggestions(newSuggestions);
+      setPortalData((prev) => ({ ...prev, visible: false }));
     }
   };
 
   const handleRemovePoint = (index: number) => {
     if (points.length > 1) {
       dispatch(removePoint(index));
-
       const updatedInputs = [...inputValues];
       updatedInputs.splice(index, 1);
       setInputValues(updatedInputs);
-
-      const updatedSuggestions = [...suggestions];
-      updatedSuggestions.splice(index, 1);
-      setSuggestions(updatedSuggestions);
+      setPortalData((prev) => ({ ...prev, visible: false }));
     }
   };
 
@@ -73,9 +96,7 @@ export default function DistanceInfo() {
     updatedInputs[index] = suggestion.display_name;
     setInputValues(updatedInputs);
 
-    const newSuggestions = [...suggestions];
-    newSuggestions[index] = [];
-    setSuggestions(newSuggestions);
+    setPortalData((prev) => ({ ...prev, visible: false }));
   };
 
   const addNewInputAfter = (index: number) => {
@@ -89,10 +110,6 @@ export default function DistanceInfo() {
     const updatedInputs = [...inputValues];
     updatedInputs.splice(index + 1, 0, "");
     setInputValues(updatedInputs);
-
-    const updatedSuggestions = [...suggestions];
-    updatedSuggestions.splice(index + 1, 0, []);
-    setSuggestions(updatedSuggestions);
   };
 
   useEffect(() => {
@@ -102,32 +119,24 @@ export default function DistanceInfo() {
   }, [points.length, dispatch]);
 
   return (
-    <div className="mt-4 text-lg max-sm:max-h-[25vh] max-h-[60vh]  overflow-y-scroll">
-      <ul>
-        {points.map((_, index) => (
-          <div key={index} className="mb-4 relative">
-            <PointItem
-              index={index}
-              addNewInputAfter={addNewInputAfter}
-              handleInputChange={handleInputChange}
-              handleRemovePoint={handleRemovePoint}
-              inputValues={inputValues}
-            />
-            {suggestions[index] && suggestions[index].length > 0 && (
-              <ul className="absolute bg-[#1a1a1a] border rounded-md w-full z-10 mt-1 shadow">
-                {suggestions[index].map((sugg: Suggestion, i: number) => (
-                  <SuggestionsItem
-                    sugg={sugg}
-                    i={i}
-                    index={index}
-                    handleSelectSuggestion={handleSelectSuggestion}
-                  />
-                ))}
-              </ul>
-            )}
-          </div>
-        ))}
-      </ul>
-    </div>
+    <>
+      <div className="mt-4 text-lg max-sm:max-h-[25vh] max-h-[60vh] overflow-y-scroll">
+        <ul>
+          {points.map((_, index) => (
+            <div key={index} className="mb-4 relative">
+              <PointItem
+                index={index}
+                inputRef={(el) => (inputRefs.current[index] = el)}
+                addNewInputAfter={addNewInputAfter}
+                handleInputChange={handleInputChange}
+                handleRemovePoint={handleRemovePoint}
+                inputValues={inputValues}
+              />
+            </div>
+          ))}
+        </ul>
+      </div>
+      <SuggestionsPortal {...portalData} />
+    </>
   );
 }

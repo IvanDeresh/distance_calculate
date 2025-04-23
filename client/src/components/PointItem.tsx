@@ -7,6 +7,7 @@ const PointItem = ({
   handleInputChange,
   addNewInputAfter,
   handleRemovePoint,
+  inputRef,
 }: PointItemType) => {
   return (
     <div className="flex items-center">
@@ -15,6 +16,7 @@ const PointItem = ({
       </label>
       <input
         type="text"
+        ref={inputRef}
         value={inputValues[index] ?? ""}
         onChange={(e) => handleInputChange(index, e.target.value)}
         className="px-2 py-1 border rounded-md text-[1rem] w-full"

@@ -11,9 +11,10 @@ export type SuggestionsItemProps = {
 export type PointItemType = {
   index: number;
   inputValues: string[];
-  handleInputChange: Function;
-  addNewInputAfter: Function;
-  handleRemovePoint: Function;
+  handleInputChange: (index: number, value: string) => void;
+  addNewInputAfter: (index: number) => void;
+  handleRemovePoint: (index: number) => void;
+  inputRef?: (el: HTMLInputElement | null) => void;
 };
 
 export type InfoProps = {

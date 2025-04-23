@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import MapComponent from "./components/Map";
 import DistanceInfo from "./components/DistanceInfo";
 import { useDispatch, useSelector } from "react-redux";
@@ -32,10 +32,12 @@ function App() {
   const dispatch = useDispatch();
   const points = useSelector((state: RootState) => state.map.points);
 
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
   useEffect(() => {
-    const points = parseUrlPath(location.pathname);
-    if (points.length > 0) {
-      dispatch(setPoints(points));
+    const parsed = parseUrlPath(location.pathname);
+    if (parsed.length > 0) {
+      dispatch(setPoints(parsed));
     }
   }, [location.pathname, dispatch]);
 
@@ -56,9 +58,9 @@ function App() {
 
   return (
     <div className="p-6 relative min-w-full flex">
-      <div className="absolute z-100 bg-[#242424] top-10 left-20 p-10  max-lg:w-[40vw] max-md:w-auto max-sm:left-5 rounded-lg">
-        <h2 className="text-3xl font-bold mb-4 ">Distance Tool 🗺️⁀જ✈︎</h2>
-        <DistanceInfo />
+      <div className="absolute z-100 bg-[#242424] top-10 left-20 p-10 max-lg:w-[40vw] max-md:w-auto max-sm:left-5 rounded-lg">
+        <h2 className="text-3xl font-bold mb-4">Distance Tool 🗺️⁀જ✈︎</h2>
+        <DistanceInfo inputRefs={inputRefs} />
         <div className="mt-2">
           <Info points={points} total={total} />
           <button className="mt-2" onClick={() => dispatch(clearPoints())}>
@@ -66,6 +68,7 @@ function App() {
           </button>
         </div>
       </div>
+
       <div className="z-10 max-sm:mt-[35rem]">
         <MapComponent />
       </div>
