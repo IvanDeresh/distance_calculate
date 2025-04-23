@@ -64,7 +64,7 @@ function App() {
           <button onClick={() => dispatch(clearPoints())}>Clear All</button>
         </div>
       </div>
-      <div className="z-10 max-sm:mt-[25rem]">
+      <div className="z-10 max-sm:mt-[35rem]">
         <MapComponent />
       </div>
     </div>

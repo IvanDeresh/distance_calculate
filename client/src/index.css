@@ -83,10 +83,12 @@ button:focus-visible {
 
 .map-wrapper {
   max-height: 90vh;
+  max-width: 95vw;
 }
 
 @media (max-width: 640px) {
   .map-wrapper {
     max-height: 65vh;
+    max-width: 90vw;
   }
 }
