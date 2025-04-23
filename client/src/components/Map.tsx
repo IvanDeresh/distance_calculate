@@ -11,6 +11,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { addPoint } from "../store/features/mapSlice";
 import { Icon, LatLngExpression } from "leaflet";
 import { RootState } from "../store/store";
+import { useEffect, useState } from "react";
+import { getRoadRoute } from "../utils/api";
+
 function normalizeLng(lng: number) {
   return ((((lng + 180) % 360) + 360) % 360) - 180;
 }
@@ -30,11 +33,33 @@ function ClickHandler() {
 export default function MapComponent() {
   const points = useSelector((state: RootState) => state.map.points);
   const mapCenter: LatLngExpression = [52, 19];
+  const [geoJsonCoords, setGeoJsonCoords] = useState<LatLngExpression[]>([]);
   const customIcon = new Icon({
     iconUrl: "/assets/img/travel_15692756.png",
     iconSize: [25, 35],
     iconAnchor: [12.5, 35],
   });
+
+  useEffect(() => {
+    const fetchRoute = async () => {
+      if (points.length >= 2) {
+        let allCoords: LatLngExpression[] = [];
+        for (let i = 0; i < points.length - 1; i++) {
+          const route = await getRoadRoute(points[i], points[i + 1]);
+          const coords = route.features[0].geometry.coordinates.map(
+            ([lng, lat]: [number, number]) => [lat, lng] as LatLngExpression
+          );
+          allCoords = [...allCoords, ...coords];
+        }
+        setGeoJsonCoords(allCoords);
+      } else {
+        setGeoJsonCoords([]);
+      }
+    };
+
+    fetchRoute();
+  }, [points]);
+
   return (
     <MapContainer
       center={mapCenter}
@@ -52,41 +77,38 @@ export default function MapComponent() {
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        // english names
-        // url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-        // attribution='&copy; <a href="https://carto.com/">CARTO</a> contributors'
-
-        // noWrap={true} - no wrap and no repeat on map
       />
+
       <ClickHandler />
 
-      {points.map((point: { lat: number; lng: number }, i: number) => (
-        <Marker
-          icon={customIcon}
-          key={i}
-          position={[point.lat, point.lng] as LatLngExpression}
-        >
+      {points.map((point, i) => (
+        <Marker icon={customIcon} key={i} position={[point.lat, point.lng]}>
           <Popup>{`${point.lat}, ${point.lng}`}</Popup>
         </Marker>
       ))}
 
-      {points.map((point: { lat: number; lng: number }, index: number) => {
+      {points.map((point, index) => {
         if (index < points.length - 1) {
           return (
             <Polyline
-              key={index}
-              positions={
-                [
-                  [point.lat, point.lng],
-                  [points[index + 1].lat, points[index + 1].lng],
-                ] as LatLngExpression[]
-              }
-              pathOptions={{ color: "black", weight: 2, opacity: 0.5 }}
+              key={`line-${index}`}
+              positions={[
+                [point.lat, point.lng],
+                [points[index + 1].lat, points[index + 1].lng],
+              ]}
+              pathOptions={{ color: "black", weight: 2, opacity: 0.7 }}
             />
           );
         }
         return null;
       })}
+
+      {geoJsonCoords.length > 0 && (
+        <Polyline
+          positions={geoJsonCoords}
+          pathOptions={{ color: "blue", weight: 2, opacity: 0.7 }}
+        />
+      )}
     </MapContainer>
   );
 }

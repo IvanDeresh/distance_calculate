@@ -1,13 +1,22 @@
+import { Point } from "../types/store";
 import { Suggestion } from "../types/util";
+import axios from "axios";
+
+const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org";
+const API_KEY = import.meta.env.VITE_API_KEY;
 
 export const geocode = async (query: string) => {
   try {
-    const response = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-        query
-      )}&limit=1&addressdetails=1`
-    );
-    const data = await response.json();
+    const response = await axios.get(`${NOMINATIM_BASE_URL}/search`, {
+      params: {
+        format: "json",
+        q: query,
+        limit: 1,
+        addressdetails: 1,
+      },
+    });
+
+    const data = response.data;
     if (data.length > 0) {
       const { lat, lon } = data[0];
       return { lat: parseFloat(lat), lng: parseFloat(lon) };
@@ -24,18 +33,18 @@ export const fetchSuggestions = async (
   retries: number = 3
 ): Promise<Suggestion[]> => {
   try {
-    const response = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-        query
-      )}&limit=5&addressdetails=1`
-    );
-    const data = await response.json();
+    const response = await axios.get(`${NOMINATIM_BASE_URL}/search`, {
+      params: {
+        format: "json",
+        q: query,
+        limit: 5,
+        addressdetails: 1,
+      },
+    });
+
+    const data = response.data;
     console.log(data);
-    if (response.ok && data) {
-      return data as Suggestion[];
-    } else {
-      throw new Error("Failed to fetch suggestions");
-    }
+    return data as Suggestion[];
   } catch (error) {
     console.error("Suggestions fetch error:", error);
     if (retries > 0) {
@@ -51,3 +60,23 @@ export const isCoordinates = (value: string) => {
   const regex = /^-?\d+(\.\d+)?,\s?-?\d+(\.\d+)?$/;
   return regex.test(value);
 };
+
+export async function getRoadRoute(p1: Point, p2: Point) {
+  const res = await axios.post(
+    "https://api.openrouteservice.org/v2/directions/driving-car/geojson",
+    {
+      coordinates: [
+        [p1.lng, p1.lat],
+        [p2.lng, p2.lat],
+      ],
+    },
+    {
+      headers: {
+        Authorization: API_KEY,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  return res.data;
+}
