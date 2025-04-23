@@ -30,6 +30,7 @@ export const fetchSuggestions = async (
       )}&limit=5&addressdetails=1`
     );
     const data = await response.json();
+    console.log(data);
     if (response.ok && data) {
       return data as Suggestion[];
     } else {

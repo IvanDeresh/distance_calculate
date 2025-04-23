@@ -5,12 +5,13 @@ import { useEffect, useState } from "react";
 import SuggestionsItem from "./SuggestionsItem";
 import PointItem from "./PointItem";
 import { fetchSuggestions, isCoordinates } from "../utils/api";
+import { Suggestion } from "../types/util";
 
 export default function DistanceInfo() {
   const points = useSelector((state: RootState) => state.map.points);
   const dispatch = useDispatch();
   const [inputValues, setInputValues] = useState<string[]>([]);
-  const [suggestions, setSuggestions] = useState<any[][]>([]);
+  const [suggestions, setSuggestions] = useState<Suggestion[][]>([]);
 
   useEffect(() => {
     setInputValues(points.map((p) => `${p.lat}, ${p.lng}`));
@@ -60,7 +61,7 @@ export default function DistanceInfo() {
     }
   };
 
-  const handleSelectSuggestion = (index: number, suggestion: any) => {
+  const handleSelectSuggestion = (index: number, suggestion: Suggestion) => {
     if (!suggestion || !suggestion.lat || !suggestion.lon) return;
     const lat = parseFloat(suggestion.lat);
     const lng = parseFloat(suggestion.lon);
@@ -114,7 +115,7 @@ export default function DistanceInfo() {
             />
             {suggestions[index] && suggestions[index].length > 0 && (
               <ul className="absolute bg-[#1a1a1a] border rounded-md w-full z-10 mt-1 shadow">
-                {suggestions[index].map((sugg: any, i: number) => (
+                {suggestions[index].map((sugg: Suggestion, i: number) => (
                   <SuggestionsItem
                     sugg={sugg}
                     i={i}

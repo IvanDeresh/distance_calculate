@@ -1,9 +1,10 @@
 import { Point } from "./store";
+import { Suggestion } from "./util";
 
 export type SuggestionsItemProps = {
   i: number;
   index: number;
-  sugg: any;
+  sugg: Suggestion;
   handleSelectSuggestion: Function;
 };
 
