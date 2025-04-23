@@ -10,25 +10,25 @@ const PointItem = ({
 }: PointItemType) => {
   return (
     <div className="flex items-center">
-      <label className="bg-[#1a1a1a] text-white min-w-[3rem] flex justify-center items-center font-bold h-[3rem] rounded-md mr-2">
+      <label className="bg-[#1a1a1a] text-white min-w-[2.5rem] flex justify-center items-center font-bold h-[2.5rem] rounded-md mr-2">
         {index + 1}
       </label>
       <input
         type="text"
         value={inputValues[index] ?? ""}
         onChange={(e) => handleInputChange(index, e.target.value)}
-        className="p-2 border rounded-md w-full"
+        className="px-2 py-1 border rounded-md text-[1rem] w-full"
         placeholder="Enter coordinates or place name"
       />
       <button
         onClick={() => addNewInputAfter(index)}
-        className="ml-2 mr-1 p-2 clip-path-app text-white w-[3rem] h-[3rem] flex justify-center items-center rounded-full"
+        className="ml-2 mr-1 p-2 clip-path-app text-white w-[2.5rem] h-[2.5rem] flex justify-center items-center rounded-full"
       >
         +
       </button>
       <button
         onClick={() => handleRemovePoint(index)}
-        className="ml-1 mr-2 p-2 text-white flex justify-center items-center w-[3rem] h-[3rem] rounded-full"
+        className="ml-1 mr-2 p-2 text-white flex justify-center items-center w-[2.5rem] h-[2.5rem] rounded-full"
       >
         -
       </button>
