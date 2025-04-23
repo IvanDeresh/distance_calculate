@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -64,5 +66,27 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+}
+
+.clip-path-app {
+  clip-path: polygon(
+    100% 0%,
+    // top-right
+    0% 100%,
+    // bottom-right
+    0% 100%,
+    // bottom-left
+    0% 0% // top-left
+  );
+}
+
+.map-wrapper {
+  max-height: 90vh;
+}
+
+@media (max-width: 640px) {
+  .map-wrapper {
+    max-height: 65vh;
   }
 }
