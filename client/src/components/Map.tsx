@@ -9,8 +9,7 @@ import {
 import "leaflet/dist/leaflet.css";
 import { useDispatch, useSelector } from "react-redux";
 import { addPoint } from "../store/features/mapSlice";
-import { LatLngExpression } from "leaflet";
-
+import { Icon, LatLngExpression } from "leaflet";
 function normalizeLng(lng: number) {
   return ((((lng + 180) % 360) + 360) % 360) - 180;
 }
@@ -30,7 +29,11 @@ function ClickHandler() {
 export default function MapComponent() {
   const points = useSelector((state: any) => state.map.points);
   const mapCenter: LatLngExpression = [52, 19];
-
+  const customIcon = new Icon({
+    iconUrl: "/assets/img/travel_15692756.png",
+    iconSize: [25, 35],
+    iconAnchor: [12.5, 35],
+  });
   return (
     <MapContainer
       center={mapCenter}
@@ -53,7 +56,11 @@ export default function MapComponent() {
       <ClickHandler />
 
       {points.map((point: { lat: number; lng: number }, i: number) => (
-        <Marker key={i} position={[point.lat, point.lng] as LatLngExpression}>
+        <Marker
+          icon={customIcon}
+          key={i}
+          position={[point.lat, point.lng] as LatLngExpression}
+        >
           <Popup>{`${point.lat}, ${point.lng}`}</Popup>
         </Marker>
       ))}
