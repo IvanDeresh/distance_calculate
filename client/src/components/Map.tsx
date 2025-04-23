@@ -49,9 +49,13 @@ export default function MapComponent() {
       maxBoundsViscosity={1.0}
     >
       <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution="© OpenStreetMap"
-        // noWrap={true}
+        // english names
+        // url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+        // attribution='&copy; <a href="https://carto.com/">CARTO</a> contributors'
+
+        // noWrap={true} - no wrap and no repeat on map
       />
       <ClickHandler />
 
