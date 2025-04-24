@@ -1,3 +1,4 @@
+import { JSX } from "react";
 import { Point } from "./store";
 import { Suggestion } from "./util";
 
@@ -20,4 +21,12 @@ export type PointItemType = {
 export type InfoProps = {
   total: number;
   points: Point[];
+};
+
+export type PortalProps = {
+  visible: boolean;
+  top: number;
+  left: number;
+  width: number;
+  suggestions: JSX.Element[];
 };

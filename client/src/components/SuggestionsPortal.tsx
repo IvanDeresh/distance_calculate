@@ -1,13 +1,5 @@
-import { JSX } from "react";
 import ReactDOM from "react-dom";
-
-type Props = {
-  visible: boolean;
-  top: number;
-  left: number;
-  width: number;
-  suggestions: JSX.Element[];
-};
+import { PortalProps } from "../types/props";
 
 export default function SuggestionsPortal({
   visible,
@@ -15,7 +7,7 @@ export default function SuggestionsPortal({
   left,
   width,
   suggestions,
-}: Props) {
+}: PortalProps) {
   if (!visible) return null;
 
   return ReactDOM.createPortal(
